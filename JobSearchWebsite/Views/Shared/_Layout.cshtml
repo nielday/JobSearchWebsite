@@ -1,0 +1,442 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - JobSearchWebsite</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXđện đầu tiên tại Việt Nam." />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/layout.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/JobSearchWebsite.styles.css" asp-append-version="true" />
+    <link rel="icon" href="~/favicon.ico" type="image/x-icon" />
+    <style>
+        .navbar-nav .nav-link {
+            font-size: 0.9rem;
+            padding: 0.4rem 0.6rem;
+            display: flex;
+            align-items: center;
+        }
+
+            .navbar-nav .nav-link i {
+                font-size: 0.9rem;
+                margin-right: 0.3rem;
+            }
+
+        .navbar-nav .dropdown-toggle {
+            font-size: 0.9rem;
+            padding: 0.4rem 0.6rem;
+        }
+
+        .dropdown-menu {
+            min-width: 180px;
+        }
+
+            .dropdown-menu .nav-link {
+                font-size: 0.85rem;
+                padding: 0.3rem 0.8rem;
+            }
+
+                .dropdown-menu .nav-link i {
+                    font-size: 0.85rem;
+                    margin-right: 0.3rem;
+                }
+
+        .navbar-nav .nav-item {
+            margin-right: 0.2rem;
+        }
+
+        .form-check-label {
+            font-size: 0.9rem;
+        }
+
+        .form-check-input {
+            width: 2rem;
+            height: 1rem;
+        }
+
+        .notification-badge {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.4rem;
+            top: -5px;
+            right: -5px;
+        }
+
+        .navbar-nav {
+            flex-wrap: wrap;
+        }
+
+        .navbar-brand {
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            padding: 0.2rem 0.5rem;
+        }
+
+            .navbar-brand img {
+                max-height: 50px;
+                margin-right: 0.5rem;
+                object-fit: contain;
+            }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm py-2">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/logo-truong-dai-hoc-dai-nam.jpg" alt="Logo">
+                    CareerViet
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house-door"></i> Trang chủ
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">
+                                <i class="bi bi-shield-lock"></i> Chính sách
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="CareerGuides" asp-action="Index">
+                                <i class="bi bi-book"></i> Cẩm nang việc làm
+                            </a>
+                        </li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-gear"></i> Quản lý Admin
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                                    <li>
+                                        <a class="nav-link text-light" asp-area="Admin" asp-controller="Admin" asp-action="Index">
+                                            <i class="bi bi-people"></i> Quản lý người dùng
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link text-light" asp-area="Admin" asp-controller="Admin" asp-action="Jobs">
+                                            <i class="bi bi-briefcase"></i> Quản lý công việc
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link text-light" asp-area="Admin" asp-controller="Admin" asp-action="Applications">
+                                            <i class="bi bi-archive"></i> Quản lý đơn ứng tuyển
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link text-light" asp-area="Admin" asp-controller="Admin" asp-action="Statistics">
+                                            <i class="bi bi-bar-chart"></i> Thống kê
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link text-light" asp-area="Admin" asp-controller="Admin" asp-action="AllNotifications">
+                                            <i class="bi bi-bell"></i> Tất cả thông báo
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link text-light" asp-area="Admin" asp-controller="Admin" asp-action="NotificationStatistics">
+                                            <i class="bi bi-graph-up"></i> Thống kê thông báo
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link text-light" asp-area="" asp-controller="CareerGuides" asp-action="Create">
+                                            <i class="bi bi-plus-circle"></i> Đăng cẩm nang
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link text-light" asp-area="" asp-controller="AdminResumeTemplates" asp-action="Index">
+                                            <i class="bi bi-file-earmark-text"></i> Quản lý CV mẫu
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        @if (User.IsInRole("Employer"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="employerDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-building"></i> Nhà tuyển dụng
+                                    @if (ViewBag.UnreadNotifications > 0)
+                                    {
+                                        <span class="notification-badge">@ViewBag.UnreadNotifications</span>
+                                    }
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="employerDropdown">
+                                    <li>
+                                        <a class="nav-link text-light" asp-controller="Employer" asp-action="Dashboard">
+                                            <i class="bi bi-speedometer2"></i> Dashboard
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link text-light" asp-controller="Employer" asp-action="SearchCandidates">
+                                            <i class="bi bi-search"></i> Tìm kiếm hồ sơ
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link text-light" asp-controller="Job" asp-action="Create">
+                                            <i class="bi bi-plus-circle"></i> Đăng tin tuyển dụng
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link text-light" asp-controller="Employer" asp-action="Notifications">
+                                            <i class="bi bi-bell"></i> Thông báo
+                                            @if (ViewBag.UnreadNotifications > 0)
+                                            {
+                                                <span class="notification-badge">@ViewBag.UnreadNotifications</span>
+                                            }
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        @if (User.IsInRole("JobSeeker"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="jobSeekerDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-person"></i> JobSeeker
+                                    @if (ViewBag.UnreadNotifications > 0)
+                                    {
+                                        <span class="notification-badge">@ViewBag.UnreadNotifications</span>
+                                    }
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="jobSeekerDropdown">
+                                    <li>
+                                        <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Profile">
+                                            <i class="bi bi-file-person"></i> Hồ sơ cá nhân
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link text-light" asp-area="JobSeeker" asp-controller="Profile" asp-action="Applications">
+                                            <i class="bi bi-list-check"></i> Lịch sử ứng tuyển
+                                        </a>
+                                    </li>
+                                    <li class="dropdown-divider"></li>
+                                    <li class="dropdown-header">Công việc đã lưu</li>
+                                    @if (ViewBag.SavedJobs != null)
+                                    {
+                                        var savedJobs = ViewBag.SavedJobs as IEnumerable<JobSearchWebsite.Models.Job>;
+                                        @if (savedJobs != null && savedJobs.Any())
+                                        {
+                                            foreach (var job in savedJobs)
+                                            {
+                                                <li>
+                                                    <a class="nav-link text-light" asp-controller="JobSeeker" asp-action="Details" asp-route-id="@job.Id">
+                                                        @job.Title
+                                                        <button class="btn btn-sm btn-danger float-end remove-saved-job" data-job-id="@job.Id">Xóa</button>
+                                                    </a>
+                                                </li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <li><a class="nav-link text-light disabled">Chưa có công việc nào</a></li>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <li><a class="nav-link text-light disabled">Chưa có công việc nào</a></li>
+                                    }
+                                    <li>
+                                        <a class="nav-link text-light" asp-controller="JobSeeker" asp-action="SavedJobs">
+                                            <i class="bi bi-bookmark"></i> Xem tất cả
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link text-light" asp-area="JobSeeker" asp-controller="JobSeeker" asp-action="AllNotifications">
+                                            <i class="bi bi-bell"></i> Thông báo
+                                            @if (ViewBag.UnreadNotifications > 0)
+                                            {
+                                                <span class="notification-badge">@ViewBag.UnreadNotifications</span>
+                                            }
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link text-light" asp-area="" asp-controller="JobSeekerResumeTemplates" asp-action="Index">
+                                            <i class="bi bi-file-earmark-text"></i> Xem CV mẫu
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                    <div class="form-check form-switch ms-2">
+                        <input class="form-check-input" type="checkbox" id="darkModeToggle" />
+                        <label class="form-check-label text-white" for="darkModeToggle">Dark Mode</label>
+                    </div>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container main-container flex-grow-1" style="padding-bottom: 350px;">
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="footer bg-dark text-white text-center py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <h5>JobSearchWebsite</h5>
+                    <p class="mb-0">Nền tảng tìm kiếm việc làm hàng đầu tại Việt Nam.</p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h5>Liên hệ</h5>
+                    <p class="mb-0">Email: support@jobsearchwebsite.com</p>
+                    <p class="mb-0">Hotline: 1900 1234</p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h5>Theo dõi chúng tôi</h5>
+                    <div class="social-icons">
+                        <a href="https://facebook.com/yourpage" target="_blank" class="text-white">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://twitter.com/yourpage" target="_blank" class="text-white">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://linkedin.com/yourpage" target="_blank" class="text-white">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="https://instagram.com/yourpage" target="_blank" class="text-white">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-light my-3">
+            <p class="mb-0">
+                © 2025 - JobSearchWebsite -
+                <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-decoration-none text-white">
+                    Chính sách
+                </a>
+            </p>
+        </div>
+    </footer>
+
+    <button class="back-to-top" id="backToTopBtn">
+        <i class="bi bi-arrow-up-circle"></i>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var dropdowns = document.querySelectorAll('.dropdown-toggle');
+            dropdowns.forEach(function (dropdown) {
+                new bootstrap.Dropdown(dropdown);
+            });
+
+            document.querySelectorAll('.form-inline').forEach(form => {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const form = this;
+                    Swal.fire({
+                        title: 'Xác nhận đăng xuất',
+                        text: 'Bạn có chắc chắn muốn đăng xuất khỏi hệ thống?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Đăng xuất',
+                        cancelButtonText: 'Hủy',
+                        animation: true,
+                        showClass: { popup: 'animate__animated animate__fadeInDown' },
+                        hideClass: { popup: 'animate__animated animate__fadeOutUp' }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+
+            const backToTopBtn = document.getElementById('backToTopBtn');
+            window.addEventListener('scroll', function () {
+                if (window.scrollY > 200) {
+                    backToTopBtn.style.display = 'block';
+                } else {
+                    backToTopBtn.style.display = 'none';
+                }
+            });
+
+            backToTopBtn.addEventListener('click', function () {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            darkModeToggle.addEventListener('change', function () {
+                document.body.classList.toggle('dark-mode', this.checked);
+                const mainContainer = document.querySelector('.main-container');
+                if (this.checked) {
+                    mainContainer.style.background = 'linear-gradient(135deg, #0a001a, #15002a)';
+                    mainContainer.style.color = '#fff';
+                    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                        menu.style.background = 'linear-gradient(135deg, #0a001a, #15002a)';
+                    });
+                } else {
+                    mainContainer.style.background = 'linear-gradient(135deg, #1a0033, #2a0044)';
+                    mainContainer.style.color = '#fff';
+                    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                        menu.style.background = 'linear-gradient(135deg, #1a0033, #2a0044)';
+                    });
+                }
+            });
+
+            $('.remove-saved-job').click(function (e) {
+                e.preventDefault();
+                var jobId = $(this).data('job-id');
+                fetch('/JobSeeker/RemoveSavedJob', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    body: JSON.stringify({ jobId: parseInt(jobId) })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    Swal.fire({
+                        title: 'Thành công!',
+                        text: data.message,
+                        icon: 'success',
+                        confirmButtonColor: '#3085d6',
+                        animation: true,
+                        showClass: { popup: 'animate__animated animate__fadeInDown' },
+                        hideClass: { popup: 'animate__animated animate__fadeOutUp' }
+                    }).then(() => {
+                        if (data.success) {
+                            window.location.reload();
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        title: 'Lỗi!',
+                        text: 'Đã xảy ra lỗi khi xóa công việc.',
+                        icon: 'error',
+                        confirmButtonColor: '#d33',
+                        animation: true,
+                        showClass: { popup: 'animate__animated animate__fadeInDown' },
+                        hideClass: { popup: 'animate__animated animate__fadeOutUp' }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

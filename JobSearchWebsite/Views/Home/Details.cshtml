@@ -1,0 +1,102 @@
+﻿@model JobSearchWebsite.Models.Job
+@{
+    ViewData["Title"] = "Chi tiết công việc - " + Model.Title;
+}
+
+<div class="container mt-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Home">Trang chủ</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Chi tiết công việc</li>
+        </ol>
+    </nav>
+
+    <!-- Hiển thị thông báo -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mb-4 animate__animated animate__fadeIn" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show mb-4 animate__animated animate__fadeIn" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Chi tiết công việc -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-5">
+            <h1 class="card-title text-primary fw-bold mb-4">
+                <i class="bi bi-briefcase-fill me-2"></i>@Model.Title
+            </h1>
+            <div class="row">
+                <div class="col-md-8">
+                    <p class="text-muted mb-3">
+                        <i class="bi bi-building me-1"></i><strong>Công ty:</strong> @Model.Company
+                    </p>
+                    <p class="text-muted mb-3">
+                        <i class="bi bi-geo-alt me-1"></i><strong>Địa điểm:</strong> @Model.Location
+                    </p>
+                    <p class="text-muted mb-3">
+                        <i class="bi bi-calendar-date me-1"></i><strong>Ngày đăng:</strong> @Model.CreatedDate.ToString("dd/MM/yyyy HH:mm")
+                    </p>
+                    <p class="text-muted mb-3">
+                        <i class="bi bi-info-circle me-1"></i><strong>Trạng thái:</strong> @Model.Status
+                    </p>
+                    <h4 class="mt-4 mb-3">Mô tả công việc</h4>
+                    <p class="text-muted">@Model.Description</p>
+                </div>
+                <div class="col-md-4 text-md-end text-center mt-4 mt-md-0">
+                    @if (User.IsInRole("JobSeeker"))
+                    {
+                        <a href="#" class="btn btn-primary btn-lg mb-2">Ứng tuyển ngay</a>
+                    }
+                    @if (User.IsInRole("Admin") || (User.IsInRole("Employer") && Model.UserId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value))
+                    {
+                        <div class="d-flex justify-content-md-end justify-content-center gap-2">
+                            <a asp-action="Edit" asp-controller="Job" asp-route-id="@Model.Id" class="btn btn-warning btn-lg">Sửa</a>
+                            <a asp-action="Delete" asp-controller="Job" asp-route-id="@Model.Id" class="btn btn-danger btn-lg">Xóa</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nút quay lại -->
+    <div class="mt-4">
+        <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Quay lại danh sách
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <style>
+        .card {
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+        }
+
+        .text-muted {
+            font-size: 1.1rem;
+        }
+
+        .btn-lg {
+            padding: 10px 20px;
+        }
+
+        @@media (max-width: 576px) {
+            .btn-lg {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+}

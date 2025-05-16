@@ -1,0 +1,34 @@
+﻿@model IEnumerable<JobSearchWebsite.Models.JobApplication>
+@{
+    ViewData["Title"] = "Lịch sử ứng tuyển";
+}
+
+<div class="container mt-5">
+    <h2 class="text-primary mb-4">Lịch sử ứng tuyển của bạn</h2>
+    @if (Model.Any())
+    {
+        <div class="list-group">
+            @foreach (var application in Model)
+            {
+                <a href="#" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">@application.Job.Title</h5>
+                        <small>@application.AppliedDate.ToString("dd/MM/yyyy")</small>
+                    </div>
+                    <p class="mb-1">Trạng thái: @application.Status</p>
+                    @if (!string.IsNullOrEmpty(application.CVUrl))
+                    {
+                        <p class="mb-1"><a href="@application.CVUrl" target="_blank">Xem CV</a></p>
+                    }
+                </a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center py-5" role="alert">
+            <p>Bạn chưa ứng tuyển công việc nào.</p>
+            <a asp-action="Index" asp-controller="JobSeeker" class="btn btn-primary">Tìm kiếm công việc</a>
+        </div>
+    }
+</div>

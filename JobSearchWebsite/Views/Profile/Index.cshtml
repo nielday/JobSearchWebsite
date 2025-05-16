@@ -1,0 +1,85 @@
+﻿@model JobSearchWebsite.Models.UserProfile
+@{
+    ViewData["Title"] = "Hồ sơ cá nhân";
+}
+
+<h2>Hồ sơ cá nhân</h2>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-success">@ViewBag.Message</div>
+}
+
+<form asp-action="Index" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="FullName"></label>
+        <input asp-for="FullName" class="form-control" />
+        <span asp-validation-for="FullName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DateOfBirth"></label>
+        <input asp-for="DateOfBirth" class="form-control" type="date" />
+        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Address"></label>
+        <input asp-for="Address" class="form-control" />
+        <span asp-validation-for="Address" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PhoneNumber"></label>
+        <input asp-for="PhoneNumber" class="form-control" />
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Education"></label>
+        <textarea asp-for="Education" class="form-control"></textarea>
+        <span asp-validation-for="Education" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Experience"></label>
+        <textarea asp-for="Experience" class="form-control"></textarea>
+        <span asp-validation-for="Experience" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Skills"></label>
+        <textarea asp-for="Skills" class="form-control"></textarea>
+        <span asp-validation-for="Skills" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="CVFile">Tải lên CV (PDF)</label>
+        <input type="file" name="CVFile" class="form-control" accept=".pdf" />
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.CVUrl))
+    {
+        <div class="form-group mt-2">
+            <label>CV hiện tại:</label>
+            <a class="btn btn-sm btn-outline-primary" href="@Model.CVUrl" target="_blank">Xem CV</a>
+        </div>
+    }
+
+    <div class="form-group mt-3">
+        <label asp-for="IsPublic"></label>
+        <input asp-for="IsPublic" type="checkbox" />
+        <span asp-validation-for="IsPublic" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success mt-3">Lưu hồ sơ</button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,28 @@
+﻿@model JobSearchWebsite.Models.ApplyModel
+@{
+    ViewData["Title"] = "Ứng tuyển - " + ViewBag.JobTitle;
+}
+
+<div class="container mt-5">
+    <h2 class="text-primary mb-4">Ứng tuyển cho công việc: @ViewBag.JobTitle</h2>
+    <form asp-action="Apply" asp-controller="JobSeeker" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="JobId" />
+        <div class="mb-3">
+            <label asp-for="CoverLetter" class="form-label"></label>
+            <textarea asp-for="CoverLetter" class="form-control" rows="5" placeholder="Viết thư giới thiệu của bạn..."></textarea>
+            <span asp-validation-for="CoverLetter" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="CVFile" class="form-label">Tải lên CV (PDF)</label>
+            <input asp-for="CVFile" type="file" class="form-control" accept=".pdf" />
+            <span asp-validation-for="CVFile" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Gửi đơn</button>
+        <a asp-action="Details" asp-controller="JobSeeker" asp-route-id="@Model.JobId" class="btn btn-secondary ms-2">Hủy</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

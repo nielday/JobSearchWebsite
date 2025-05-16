@@ -1,0 +1,70 @@
+﻿@model dynamic
+
+@{
+    ViewData["Title"] = "Tất cả thông báo";
+    var currentPage = ViewBag.CurrentPage ?? 1;
+    var totalPages = ViewBag.TotalPages ?? 1;
+    var notifications = ViewBag.Notifications as List<dynamic>;
+}
+
+<h2>Tất cả thông báo</h2>
+
+@if (notifications?.Any() ?? false)
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Người nhận</th>
+                <th>Nội dung</th>
+                <th>Thời gian</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in notifications)
+            {
+                var notification = item.Notification;
+                <tr>
+                    <td>@item.UserName</td>
+                    <td>@notification.Message</td>
+                    <td>@notification.CreatedDate.ToString("g")</td>
+                    <td>@(notification.IsRead ? "Đã đọc" : "Chưa đọc")</td>
+                    <td>
+                        @if (!notification.IsRead)
+                        {
+                            <form asp-action="ManageNotifications" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@notification.Id" />
+                                <input type="hidden" name="action" value="MarkAsRead" />
+                                <button type="submit" class="btn btn-primary btn-sm">Đánh dấu đã đọc</button>
+                            </form>
+                        }
+                        <form asp-action="ManageNotifications" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc muốn xóa thông báo này?');">
+                            <input type="hidden" name="id" value="@notification.Id" />
+                            <input type="hidden" name="action" value="Delete" />
+                            <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Phân trang -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <a class="page-link" asp-action="AllNotifications" asp-route-page="@i">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+else
+{
+    <p>Không có thông báo nào.</p>
+}
+
+<a asp-action="Index" class="btn btn-secondary mt-3">Quay lại</a>

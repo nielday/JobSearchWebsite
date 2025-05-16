@@ -1,0 +1,190 @@
+﻿@page
+@model ProfileModel
+@{
+    ViewData["Title"] = "Thông tin cá nhân";
+    DateTime currentDate = DateTime.Now;
+    bool isDateOfBirthValid = !Model.Profile.DateOfBirth.HasValue || Model.Profile.DateOfBirth.Value <= currentDate;
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card profile-card shadow-lg border-0">
+                <!-- Header -->
+                <div class="card-header bg-gradient-primary text-white text-center py-4">
+                    <h3 class="mb-0"><i class="bi bi-person-circle me-2"></i>@ViewData["Title"]</h3>
+                </div>
+                <!-- Body -->
+                <div class="card-body p-4">
+                    <!-- Personal Info Section -->
+                    <h5 class="section-title text-primary mb-3"><i class="bi bi-person me-2"></i>Thông tin cá nhân</h5>
+                    <div class="info-item mb-3">
+                        <strong><i class="bi bi-person-fill me-1"></i>Họ và tên:</strong> @Model.Profile.FullName
+                    </div>
+                    <div class="info-item mb-3">
+                        <strong><i class="bi bi-envelope-fill me-1"></i>Email:</strong> @Model.AppUser.Email
+                        @if (!Model.IsEmailConfirmed)
+                        {
+                            <span class="text-danger ms-2">(Chưa xác thực)</span>
+                            <a asp-page="/Account/ResendEmailConfirmation" class="btn btn-sm btn-warning ms-2">Gửi lại email xác nhận</a>
+                        }
+                        else
+                        {
+                            <span class="text-success ms-2">(Đã xác thực)</span>
+                        }
+                    </div>
+                    <div class="info-item mb-3">
+                        <strong><i class="bi bi-telephone-fill me-1"></i>Số điện thoại:</strong>
+                        @(string.IsNullOrEmpty(Model.Profile.PhoneNumber) ? "Chưa cập nhật" : Model.Profile.PhoneNumber)
+                    </div>
+                    <div class="info-item mb-3">
+                        <strong><i class="bi bi-geo-alt-fill me-1"></i>Địa chỉ:</strong>
+                        @(string.IsNullOrEmpty(Model.Profile.Address) ? "Chưa cập nhật" : Model.Profile.Address)
+                    </div>
+                    <div class="info-item mb-3">
+                        <strong><i class="bi bi-calendar-fill me-1"></i>Ngày sinh:</strong>
+                        @if (!isDateOfBirthValid)
+                        {
+                            <span class="text-danger">Ngày sinh không hợp lệ (ngày sinh không được lớn hơn ngày hiện tại).</span>
+                        }
+                        else
+                        {
+                            @(Model.Profile.DateOfBirth.HasValue ? Model.Profile.DateOfBirth.Value.ToString("dd/MM/yyyy") : "Chưa cập nhật")
+                        }
+                    </div>
+
+                    <!-- Education & Skills Section -->
+                    <h5 class="section-title text-primary mb-3 mt-4"><i class="bi bi-briefcase-fill me-2"></i>Học vấn & Kỹ năng</h5>
+                    <div class="info-item mb-3">
+                        <strong><i class="bi bi-book-fill me-1"></i>Học vấn:</strong>
+                        @(string.IsNullOrEmpty(Model.Profile.Education) ? "Chưa cập nhật" : Model.Profile.Education)
+                    </div>
+                    <div class="info-item mb-3">
+                        <strong><i class="bi bi-gear-fill me-1"></i>Kinh nghiệm:</strong>
+                        @(string.IsNullOrEmpty(Model.Profile.Experience) ? "Chưa cập nhật" : Model.Profile.Experience)
+                    </div>
+                    <div class="info-item mb-3">
+                        <strong><i class="bi bi-tools me-1"></i>Kỹ năng:</strong>
+                        @(string.IsNullOrEmpty(Model.Profile.Skills) ? "Chưa cập nhật" : Model.Profile.Skills)
+                    </div>
+                    <div class="info-item mb-3">
+                        <strong><i class="bi bi-file-earmark-text-fill me-1"></i>CV:</strong>
+                        @if (string.IsNullOrEmpty(Model.Profile.CVUrl))
+                        {
+                            <span>Chưa cập nhật</span>
+                        }
+                        else
+                        {
+                            <a href="@Model.Profile.CVUrl" target="_blank" class="text-primary">Xem CV</a>
+                        }
+                    </div>
+
+                    <!-- Account Info Section -->
+                    <h5 class="section-title text-primary mb-3 mt-4"><i class="bi bi-info-circle-fill me-2"></i>Thông tin tài khoản</h5>
+                    <div class="info-item mb-3">
+                        <strong><i class="bi bi-eye-fill me-1"></i>Hồ sơ công khai:</strong> @(Model.Profile.IsPublic ? "Có" : "Không")
+                    </div>
+                    <div class="info-item mb-3">
+                        <strong><i class="bi bi-clock-fill me-1"></i>Ngày đăng ký:</strong> @Model.AppUser.RegisteredDate.ToString("dd/MM/yyyy HH:mm")
+                    </div>
+
+                    <!-- Edit Button -->
+                    <div class="text-center mt-4">
+                        <a asp-page="./ProfileEdit" class="btn btn-primary btn-lg profile-btn">
+                            <i class="bi bi-pencil-square me-2"></i>Chỉnh sửa thông tin
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <style>
+        /* Gradient background for card header */
+        .bg-gradient-primary {
+            background: linear-gradient(90deg, #007bff, #0056b3);
+            border-radius: 12px 12px 0 0;
+        }
+
+        /* Card styling with hover effect */
+        .profile-card {
+            border-radius: 12px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .profile-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15) !important;
+            }
+
+        /* Section title styling */
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 5px;
+        }
+
+        /* Info item styling */
+        .info-item {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #333;
+        }
+
+            .info-item strong {
+                color: #0056b3;
+            }
+
+        /* Button styling with hover effect */
+        .profile-btn {
+            background-color: #007bff;
+            border-color: #007bff;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+            .profile-btn:hover {
+                background-color: #0056b3;
+                border-color: #004085;
+                transform: scale(1.05);
+            }
+
+        .btn-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+            transition: background-color 0.3s ease;
+        }
+
+            .btn-warning:hover {
+                background-color: #e0a800;
+                border-color: #d39e00;
+            }
+
+        /* Responsive adjustments */
+        @@media (max-width: 576px) {
+            .card-body
+
+        {
+            padding: 15px !important;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+        }
+
+        .info-item {
+            font-size: 0.9rem;
+        }
+
+        .profile-btn {
+            font-size: 1rem;
+            padding: 8px 16px;
+        }
+
+        }
+    </style>
+}

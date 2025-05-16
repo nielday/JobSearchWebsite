@@ -1,0 +1,96 @@
+﻿@model IEnumerable<JobSearchWebsite.Models.Job>
+@{
+    ViewData["Title"] = "Quản lý công việc";
+}
+
+<div class="container mt-5">
+    <h1 class="text-primary fw-bold">Quản lý công việc</h1>
+    <p class="text-muted">Danh sách tất cả công việc trong hệ thống.</p>
+
+    <!-- Hiển thị thông báo thành công -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Hiển thị thông báo lỗi -->
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered border-primary">
+                <thead class="table-primary">
+                    <tr>
+                        <th class="text-white">Tiêu đề</th>
+                        <th class="text-white">Công ty</th>
+                        <th class="text-white">Địa điểm</th>
+                        <th class="text-white">Trạng thái</th>
+                        <th class="text-white">Ngày tạo</th>
+                        <th class="text-white">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var job in Model)
+                    {
+                        <tr class="align-middle">
+                            <td>@job.Title</td>
+                            <td>@job.Company</td>
+                            <td>@job.Location</td>
+                            <td>@job.Status</td>
+                            <td>@job.CreatedDate.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @if (job.Status == "Chờ duyệt")
+                                {
+                                    <a asp-action="ApproveJob" asp-controller="Admin" asp-route-id="@job.Id" class="btn btn-sm btn-success me-2">Duyệt</a>
+                                    <form asp-action="RejectJob" asp-controller="Admin" asp-route-id="@job.Id" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-danger me-2" onclick="return promptReason()">Từ chối</button>
+                                    </form>
+                                }
+                                <a asp-action="Details" asp-controller="Admin" asp-route-id="@job.Id" class="btn btn-sm btn-primary me-2">Xem</a>
+                                <a asp-action="Edit" asp-controller="Job" asp-route-id="@job.Id" class="btn btn-sm btn-warning me-2">Sửa</a>
+                                <a asp-action="Delete" asp-controller="Job" asp-route-id="@job.Id" class="btn btn-sm btn-danger">Xóa</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center" role="alert">
+            Không có công việc nào.
+        </div>
+    }
+
+    <a asp-action="Index" asp-controller="Admin" class="btn btn-outline-primary mt-3">Quay lại</a>
+</div>
+
+@section Scripts {
+    <script>
+        function promptReason() {
+            var reason = prompt("Vui lòng nhập lý do từ chối:");
+            if (reason == null || reason.trim() === "") {
+                alert("Lý do không được để trống.");
+                return false;
+            }
+            var form = document.querySelector('form');
+            var input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "reason";
+            input.value = reason;
+            form.appendChild(input);
+            return true;
+        }
+    </script>
+}

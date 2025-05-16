@@ -1,0 +1,317 @@
+﻿@model IEnumerable<JobSearchWebsite.Models.Job>
+@{
+    ViewData["Title"] = "JobSeeker - Tìm kiếm công việc";
+    var categories = new[] { "IT", "Kinh doanh", "Marketing", "Hành chính", "Kỹ thuật" };
+    var locations = ViewBag.Locations as List<string> ?? new List<string>();
+    var selectedLocation = ViewBag.SelectedLocation as string;
+    var searchString = ViewBag.SearchString as string;
+    var currentPage = ViewBag.CurrentPage as int? ?? 1;
+    var totalPages = ViewBag.TotalPages as int? ?? 1;
+}
+
+<div class="container mt-5">
+    <!-- Thanh trượt quảng cáo -->
+    <div id="welcomeCarousel" class="carousel slide mb-4 shadow-sm rounded" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#welcomeCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#welcomeCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#welcomeCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="bg-primary text-white p-5 rounded text-center" style="background: linear-gradient(135deg, #007bff, #0056b3);">
+                    <h1 class="display-4 fw-bold">Chào mừng đến với JobSearchWebsite</h1>
+                    <p class="lead">Tìm kiếm công việc mơ ước của bạn một cách dễ dàng và chuyên nghiệp!</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="bg-success text-white p-5 rounded text-center" style="background: linear-gradient(135deg, #28a745, #1e7e34);">
+                    <h1 class="display-4 fw-bold">Cơ hội việc làm mới mỗi ngày</h1>
+                    <p class="lead">Khám phá hàng ngàn công việc từ các công ty hàng đầu!</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="bg-info text-white p-5 rounded text-center" style="background: linear-gradient(135deg, #17a2b8, #117a8b);">
+                    <h1 class="display-4 fw-bold">Đăng tin tuyển dụng ngay</h1>
+                    <p class="lead">Kết nối với ứng viên tiềm năng chỉ trong vài bước!</p>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#welcomeCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#welcomeCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <!-- Thống kê thông báo -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 text-white bg-info hover-up">
+                <div class="card-body d-flex align-items-center">
+                    <div>
+                        <h5 class="card-title">Thông báo chưa đọc</h5>
+                        <p class="card-text fs-2">@ViewBag.UnreadNotificationCount</p>
+                    </div>
+                    <i class="bi bi-bell-fill fs-1 ms-auto opacity-75"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Danh sách thông báo ngắn -->
+    <h4 class="text-muted mb-3">Thông báo gần đây</h4>
+    <div class="card shadow-sm border-0 mb-5">
+        <div class="card-body">
+            @if (((System.Collections.Generic.List<JobSearchWebsite.Models.Notification>)ViewBag.RecentNotifications)?.Any() ?? false)
+            {
+                <ul class="list-group">
+                    @foreach (var notification in (List<JobSearchWebsite.Models.Notification>)ViewBag.RecentNotifications)
+                    {
+                        <li class="list-group-item @(notification.IsRead ? "" : "fw-bold")">
+                            @notification.Message
+                            <small class="text-muted d-block">@notification.CreatedDate.ToString("dd/MM/yyyy HH:mm")</small>
+                        </li>
+                    }
+                </ul>
+                <a asp-action="AllNotifications" asp-controller="JobSeeker" class="btn btn-primary mt-3">Xem tất cả thông báo</a>
+            }
+            else
+            {
+                <p>Không có thông báo nào.</p>
+            }
+        </div>
+    </div>
+
+    <!-- Thanh tìm kiếm và bộ lọc -->
+    <form asp-action="Index" asp-controller="JobSeeker" method="get" class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div class="input-group w-100 w-md-50">
+            <input type="text" name="searchString" class="form-control search-input" placeholder="Nhập từ khóa tìm kiếm (VD: IT, Hà Nội)..." value="@searchString" />
+            <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+        </div>
+        <div class="d-flex gap-2">
+            @Html.DropDownList("category", new SelectList(categories), "Lọc theo ngành nghề", new { @class = "form-select w-auto", onchange = "this.form.submit()" })
+            @Html.DropDownList("location", new SelectList(locations, selectedLocation), "Lọc theo địa điểm", new { @class = "form-select w-auto", onchange = "this.form.submit()" })
+        </div>
+    </form>
+
+    <!-- Hiển thị thông báo -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mb-4 shadow-sm rounded animate__animated animate__fadeIn" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show mb-4 shadow-sm rounded animate__animated animate__fadeIn" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Danh sách công việc -->
+    @if (Model.Any())
+    {
+        <div class="row g-4">
+            @foreach (var job in Model)
+            {
+                <div class="col-md-4 col-sm-6">
+                    <div class="card h-100 shadow-lg border-0 job-card position-relative overflow-hidden" style="background: linear-gradient(135deg, #f8f9fa, #e0f7fa); border-radius: 15px;">
+                        <div class="card-body p-4">
+                            @if (DateTime.Now.Subtract(job.CreatedDate).TotalDays < 3)
+                            {
+                                <span class="badge bg-success text-white position-absolute top-0 end-0 m-2">Mới</span>
+                            }
+                            <h5 class="card-title text-primary fw-bold mb-3">
+                                <i class="bi bi-briefcase-fill me-2"></i>@job.Title
+                            </h5>
+                            <p class="card-text mb-2 text-muted">
+                                <i class="bi bi-building me-1"></i>@job.Company
+                            </p>
+                            <p class="card-text mb-2 text-muted">
+                                <i class="bi bi-geo-alt me-1"></i>@job.Location
+                            </p>
+                            <p class="card-text text-dark text-truncate-2">@job.Description</p>
+                            <div class="d-flex justify-content-between align-items-center mt-4">
+                                <a asp-action="Details" asp-controller="JobSeeker" asp-route-id="@job.Id" class="btn btn-primary btn-sm rounded-pill">
+                                    <i class="bi bi-eye-fill me-1"></i>Xem chi tiết
+                                </a>
+                                <div class="dropdown">
+                                    <button class="btn btn-success btn-sm dropdown-toggle rounded-pill" type="button" id="registerDropdown_@job.Id" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-person-check-fill me-1"></i>Đăng ký
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="registerDropdown_@job.Id">
+                                        <li><a class="dropdown-item" asp-action="Apply" asp-controller="JobSeeker" asp-route-id="@job.Id"><i class="bi bi-send-fill me-2"></i>Ứng tuyển ngay</a></li>
+                                        <li><a class="dropdown-item notify-job" href="#" data-job-id="@job.Id" id="notify-@job.Id"><i class="bi bi-bell-fill me-2"></i>Nhận thông báo</a></li>
+                                        <li><a class="dropdown-item save-job" href="#" data-job-id="@job.Id" id="save-@job.Id"><i class="bi bi-bookmark-fill me-2"></i>Lưu công việc</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Thêm phân trang -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center mt-4">
+                <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                    <a class="page-link" href="?searchString=@searchString&location=@selectedLocation&category=@ViewBag.Category&page=@(currentPage - 1)">Trước</a>
+                </li>
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <a class="page-link" href="?searchString=@searchString&location=@selectedLocation&category=@ViewBag.Category&page=@i">@i</a>
+                    </li>
+                }
+                <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                    <a class="page-link" href="?searchString=@searchString&location=@selectedLocation&category=@ViewBag.Category&page=@(currentPage + 1)">Sau</a>
+                </li>
+            </ul>
+        </nav>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center py-5 rounded shadow-sm animate__animated animate__fadeIn" role="alert">
+            <h4 class="text-warning">Không tìm thấy công việc nào phù hợp với từ khóa "@searchString" tại địa điểm "@selectedLocation".</h4>
+            <p class="text-muted mb-3">Hãy thử lại với từ khóa khác hoặc khám phá các ngành nghề nổi bật!</p>
+            <div class="d-flex justify-content-center gap-2">
+                <a href="?searchString=IT" class="btn btn-outline-primary btn-sm">IT</a>
+                <a href="?searchString=Kinh doanh" class="btn btn-outline-primary btn-sm">Kinh doanh</a>
+                <a href="?searchString=Marketing" class="btn btn-outline-primary btn-sm">Marketing</a>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <style>
+        .search-section {
+            background: linear-gradient(135deg, #32cd32, #00c6ff);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-input {
+            border-radius: 0;
+            transition: all 0.3s ease;
+            background: #fff;
+        }
+
+            .search-input:focus {
+                box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+                border-color: #007bff;
+            }
+
+        .job-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e0e0e0;
+        }
+
+            .job-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            }
+
+        .text-truncate-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .dropdown-menu {
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            z-index: 1050;
+        }
+
+        .dropdown-item:hover {
+            background-color: #e6f0ff;
+            color: #003d82;
+        }
+
+        @@media (max-width: 576px) {
+            .carousel-item h1 {
+                font-size: 1.5rem;
+            }
+
+            .carousel-item p {
+                font-size: 0.9rem;
+            }
+
+            .input-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+                .input-group .btn {
+                    width: 100%;
+                }
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.notify-job').forEach(item => {
+                item.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    alert('Chức năng Nhận thông báo cho công việc ID ' + this.getAttribute('data-job-id') + ' sẽ được triển khai!');
+                });
+            });
+
+            document.querySelectorAll('.save-job').forEach(item => {
+                item.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    var jobId = this.getAttribute('data-job-id');
+                    console.log("Raw data-job-id:", jobId); // Kiểm tra giá trị thô
+                    var parsedJobId = parseInt(jobId);
+                    console.log("Parsed jobId:", parsedJobId); // Kiểm tra giá trị đã parse
+                    if (!jobId || isNaN(parsedJobId) || parsedJobId <= 0) {
+                        console.error("Invalid jobId, cannot parse:", jobId);
+                        alert('ID công việc không hợp lệ!');
+                        return;
+                    }
+                    fetch('/JobSeeker/SaveJob', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        },
+                        body: JSON.stringify({ jobId: parsedJobId })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        if (data.success) {
+                            window.location.reload();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Đã xảy ra lỗi khi lưu công việc.');
+                    });
+                });
+            });
+
+            function filterJobs(category) {
+                var form = document.querySelector('form');
+                var categoryInput = document.createElement('input');
+                categoryInput.type = 'hidden';
+                categoryInput.name = 'category';
+                categoryInput.value = category;
+                form.appendChild(categoryInput);
+                form.submit();
+            }
+        });
+    </script>
+}

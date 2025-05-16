@@ -1,0 +1,49 @@
+﻿@model IEnumerable<JobSearchWebsite.Models.ResumeTemplate>
+@{
+    ViewData["Title"] = "Quản lý CV mẫu";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Quản lý CV mẫu</h2>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <p>
+        <a asp-action="Create" class="btn btn-primary mb-3">Tạo CV mẫu mới</a>
+    </p>
+
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Tiêu đề</th>
+                <th>Loại file</th>
+                <th>Ngày tạo</th>
+                <th>Ngày cập nhật</th>
+                <th>Người tạo</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@(item.FileType ?? "N/A")</td>
+                    <td>@item.CreatedDate.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@(item.UpdatedDate?.ToString("dd/MM/yyyy HH:mm") ?? "Chưa cập nhật")</td>
+                    <td>@item.CreatedByUser?.UserName</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Sửa</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

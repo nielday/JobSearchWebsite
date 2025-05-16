@@ -1,0 +1,37 @@
+﻿@model IEnumerable<JobSearchWebsite.Models.ApplicationUser>
+@using Microsoft.AspNetCore.Identity
+@using JobSearchWebsite.Models
+
+@{
+    ViewData["Title"] = "Quản lý người dùng";
+}
+
+@inject UserManager<ApplicationUser> UserManager
+
+<div class="container mt-4">
+    <h1>Quản lý người dùng</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Ngày đăng ký</th>
+                <th>Vai trò hiện tại</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                var roles = await UserManager.GetRolesAsync(user);
+                <tr>
+                    <td>@user.Email</td>
+                    <td>@user.RegisteredDate.ToString("dd/MM/yyyy")</td>
+                    <td>@string.Join(", ", roles)</td>
+                    <td>
+                        <a asp-action="ManageRoles" asp-route-id="@user.Id" class="btn btn-primary btn-sm">Quản lý vai trò</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

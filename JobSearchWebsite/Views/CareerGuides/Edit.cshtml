@@ -1,0 +1,47 @@
+﻿@model JobSearchWebsite.Models.CareerGuide
+
+@{
+    ViewData["Title"] = "Chỉnh sửa cẩm nang";
+}
+
+<h2>Chỉnh sửa cẩm nang</h2>
+
+@if (ViewData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @ViewData["ErrorMessage"]
+    </div>
+}
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label asp-for="Title" class="control-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Content" class="control-label"></label>
+        <textarea asp-for="Content" class="form-control" rows="5"></textarea>
+        <span asp-validation-for="Content" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="imageFile" class="control-label">Ảnh đại diện</label>
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <div>
+                <img src="@Model.ImageUrl" alt="Ảnh hiện tại" style="max-width: 200px; margin-bottom: 10px;" />
+            </div>
+        }
+        <input type="file" name="imageFile" class="form-control" accept="image/*" />
+    </div>
+    <div class="form-group mt-3">
+        <input type="submit" value="Lưu" class="btn btn-primary" />
+        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

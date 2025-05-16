@@ -1,0 +1,219 @@
+﻿@model IEnumerable<JobSearchWebsite.Models.Job>
+@{
+    ViewData["Title"] = "Trang chủ - JobSearchWebsite";
+}
+
+<div class="container mt-5">
+    <!-- Carousel Banner -->
+    <div id="welcomeCarousel" class="carousel slide mb-4 shadow-sm rounded" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#welcomeCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#welcomeCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#welcomeCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="bg-primary text-white p-5 rounded text-center" style="background: linear-gradient(135deg, #007bff, #0056b3);">
+                    <h1 class="display-4 fw-bold">Chào mừng đến với JobSearchWebsite</h1>
+                    <p class="lead">Tìm kiếm công việc mơ ước của bạn một cách dễ dàng và chuyên nghiệp!</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="bg-success text-white p-5 rounded text-center" style="background: linear-gradient(135deg, #28a745, #1e7e34);">
+                    <h1 class="display-4 fw-bold">Cơ hội việc làm mới mỗi ngày</h1>
+                    <p class="lead">Khám phá hàng ngàn công việc từ các công ty hàng đầu!</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="bg-info text-white p-5 rounded text-center" style="background: linear-gradient(135deg, #17a2b8, #117a8b);">
+                    <h1 class="display-4 fw-bold">Đăng tin tuyển dụng ngay</h1>
+                    <p class="lead">Kết nối với ứng viên tiềm năng chỉ trong vài bước!</p>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#welcomeCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#welcomeCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <!-- Hiển thị thông báo -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mb-4 animate__animated animate__fadeIn" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show mb-4 animate__animated animate__fadeIn" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Thanh tìm kiếm và bộ lọc -->
+    <div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <form asp-action="Index" asp-controller="Home" method="get" class="input-group w-100 w-md-50">
+            <input type="text" name="searchString" class="form-control search-input" placeholder="Nhập từ khóa tìm kiếm (VD: IT, Hà Nội)..." value="@ViewData["CurrentFilter"]" />
+            <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+        </form>
+        <div class="d-flex gap-2">
+            <select class="form-select w-auto" onchange="filterJobs(this.value)">
+                <option value="">Lọc theo ngành nghề</option>
+                <option value="IT">IT</option>
+                <option value="Kinh doanh">Kinh doanh</option>
+                <option value="Marketing">Marketing</option>
+            </select>
+            @if (User.IsInRole("Employer") || User.IsInRole("Admin"))
+            {
+                <a asp-action="Create" asp-controller="Job" class="btn btn-success btn-lg">Tạo công việc mới</a>
+            }
+        </div>
+    </div>
+
+    <!-- Danh sách công việc -->
+    @if (Model.Any())
+    {
+        <div class="row g-4">
+            @foreach (var job in Model)
+            {
+                <div class="col-md-4 col-sm-6">
+                    <div class="card h-100 shadow-sm border-0 hover-up position-relative">
+                        <div class="card-body p-4">
+                            @if (DateTime.Now.Subtract(job.CreatedDate).TotalDays < 3)
+                            {
+                                <span class="badge bg-success position-absolute top-0 end-0 m-2">Mới</span>
+                            }
+                            <h5 class="card-title text-primary fw-bold mb-3">
+                                <i class="bi bi-briefcase-fill me-2"></i>@job.Title
+                            </h5>
+                            <p class="card-text text-muted mb-2">
+                                <i class="bi bi-building me-1"></i>@job.Company - <i class="bi bi-geo-alt me-1"></i>@job.Location
+                            </p>
+                            <p class="card-text text-muted mb-2">
+                                <i class="bi bi-info-circle me-1"></i>Trạng thái: @job.Status
+                            </p>
+                            <p class="card-text text-truncate-2">@job.Description</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <a asp-action="Details" asp-controller="Home" asp-route-id="@job.Id" class="btn btn-primary btn-sm">Xem chi tiết</a>
+                                <div class="d-flex gap-2">
+                                    @if (User.IsInRole("Admin") && job.Status != "Đã duyệt")
+                                    {
+                                        <form asp-action="ApproveJob" asp-controller="Home" method="post" style="display:inline;">
+                                            <input type="hidden" name="id" value="@job.Id" />
+                                            <button type="submit" class="btn btn-success btn-sm">Duyệt</button>
+                                        </form>
+                                    }
+                                    @if (User.IsInRole("Admin") || (User.IsInRole("Employer") && job.UserId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value))
+                                    {
+                                        <a asp-action="Edit" asp-controller="Job" asp-route-id="@job.Id" class="btn btn-warning btn-sm">Sửa</a>
+                                        <a asp-action="Delete" asp-controller="Job" asp-route-id="@job.Id" class="btn btn-danger btn-sm">Xóa</a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <!-- Phân trang -->
+        int totalPages = ViewBag.TotalPages ?? 1;
+        int currentPage = ViewBag.CurrentPage ?? 1;
+        @if (totalPages > 1)
+        {
+            <nav aria-label="Page navigation" class="mt-5">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                        <a class="page-link" href="?page=@(currentPage - 1)&searchString=@ViewData["CurrentFilter"]">Trước</a>
+                    </li>
+                    @for (int i = 1; i <= totalPages; i++)
+                    {
+                        <li class="page-item @(i == currentPage ? "active" : "")">
+                            <a class="page-link" href="?page=@i&searchString=@ViewData["CurrentFilter"]">@i</a>
+                        </li>
+                    }
+                    <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                        <a class="page-link" href="?page=@(currentPage + 1)&searchString=@ViewData["CurrentFilter"]">Tiếp</a>
+                    </li>
+                </ul>
+            </nav>
+        }
+    }
+    else
+    {
+        <div class="alert alert-warning text-center py-5 rounded shadow-sm animate__animated animate__fadeIn" role="alert">
+            <h4>Không tìm thấy công việc nào phù hợp với từ khóa "@ViewData["CurrentFilter"]".</h4>
+            <p class="text-muted mb-3">Hãy thử lại với từ khóa khác hoặc khám phá các ngành nghề nổi bật!</p>
+            <div class="d-flex justify-content-center gap-2">
+                <a href="?searchString=IT" class="btn btn-outline-primary btn-sm">IT</a>
+                <a href="?searchString=Kinh doanh" class="btn btn-outline-primary btn-sm">Kinh doanh</a>
+                <a href="?searchString=Marketing" class="btn btn-outline-primary btn-sm">Marketing</a>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <style>
+        .hover-up {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+        }
+
+            .hover-up:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            }
+
+        .text-truncate-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .search-input {
+            transition: all 0.3s ease;
+        }
+
+            .search-input:focus {
+                box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+                border-color: #007bff;
+            }
+
+        @@media (max-width: 576px) {
+            .carousel-item h1 {
+                font-size: 1.5rem;
+            }
+
+            .carousel-item p {
+                font-size: 0.9rem;
+            }
+
+            .input-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+                .input-group .btn {
+                    width: 100%;
+                }
+        }
+    </style>
+    <script>
+        function filterJobs(category) {
+            if (category) {
+                window.location.href = "?searchString=" + category;
+            }
+        }
+    </script>
+}

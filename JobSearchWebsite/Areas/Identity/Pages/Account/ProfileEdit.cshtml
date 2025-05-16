@@ -1,0 +1,87 @@
+﻿@page
+@model ProfileEditModel
+@{
+    ViewData["Title"] = "Chỉnh sửa thông tin cá nhân";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0"><i class="bi bi-pencil-square me-2"></i>@ViewData["Title"]</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.FullName" class="form-control" placeholder="Họ và tên" />
+                            <label asp-for="Input.FullName" class="form-label">Họ và tên</label>
+                            <span asp-validation-for="Input.FullName" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Số điện thoại" />
+                            <label asp-for="Input.PhoneNumber" class="form-label">Số điện thoại</label>
+                            <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.DateOfBirth" class="form-control" type="date" />
+                            <label asp-for="Input.DateOfBirth" class="form-label">Ngày sinh</label>
+                            <span asp-validation-for="Input.DateOfBirth" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Address" class="form-control" placeholder="Địa chỉ" />
+                            <label asp-for="Input.Address" class="form-label">Địa chỉ</label>
+                            <span asp-validation-for="Input.Address" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Education" class="form-control" placeholder="Học vấn" />
+                            <label asp-for="Input.Education" class="form-label">Học vấn</label>
+                            <span asp-validation-for="Input.Education" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Experience" class="form-control" placeholder="Kinh nghiệm" />
+                            <label asp-for="Input.Experience" class="form-label">Kinh nghiệm</label>
+                            <span asp-validation-for="Input.Experience" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Skills" class="form-control" placeholder="Kỹ năng" />
+                            <label asp-for="Input.Skills" class="form-label">Kỹ năng</label>
+                            <span asp-validation-for="Input.Skills" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.CVUrl" class="form-control" placeholder="Link CV" />
+                            <label asp-for="Input.CVUrl" class="form-label">Link CV</label>
+                            <span asp-validation-for="Input.CVUrl" class="text-danger"></span>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input asp-for="Input.IsPublic" class="form-check-input" />
+                            <label class="form-check-label" asp-for="Input.IsPublic">Hồ sơ công khai</label>
+                            <span asp-validation-for="Input.IsPublic" class="text-danger"></span>
+                        </div>
+                        <button type="submit" class="w-100 btn btn-primary btn-lg">Lưu thay đổi</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <style>
+        .card-header {
+            border-radius: 8px 8px 0 0;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #004085;
+            }
+    </style>
+}

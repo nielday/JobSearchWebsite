@@ -1,0 +1,48 @@
+﻿@model IEnumerable<JobSearchWebsite.Models.Notification>
+@{
+    ViewData["Title"] = "Thông báo";
+}
+
+<div class="container mt-4">
+    <h1>Thông báo</h1>
+
+    @if (Model.Any())
+    {
+        <ul class="list-group">
+            @foreach (var notification in Model)
+            {
+                <li class="list-group-item @(notification.IsRead ? "" : "fw-bold")">
+                    @notification.Message
+                    <small class="text-muted d-block">@notification.CreatedDate.ToString("dd/MM/yyyy HH:mm")</small>
+                    @if (!notification.IsRead)
+                    {
+                        <form asp-action="MarkAsRead" asp-controller="Employer" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@notification.Id" />
+                            <button type="submit" class="btn btn-sm btn-primary mt-2">Đánh dấu đã đọc</button>
+                        </form>
+                    }
+                </li>
+            }
+        </ul>
+
+        @if (ViewBag.TotalPages > 1)
+        {
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                            <a class="page-link" asp-action="Notifications" asp-controller="Employer" asp-route-page="@i">@i</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
+    }
+    else
+    {
+        <p>Không có thông báo nào.</p>
+    }
+
+    <a asp-action="Dashboard" asp-controller="Employer" class="btn btn-secondary mt-3">Quay lại</a>
+</div>

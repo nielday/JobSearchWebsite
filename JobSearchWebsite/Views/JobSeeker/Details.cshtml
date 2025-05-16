@@ -1,0 +1,20 @@
+﻿@model JobSearchWebsite.Models.Job
+@{
+    ViewData["Title"] = "Chi tiết công việc - " + Model.Title;
+}
+
+<div class="container mt-5">
+    <h2 class="text-primary mb-4">@Model.Title</h2>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <p class="card-text"><strong>Công ty:</strong> @Model.Company</p>
+            <p class="card-text"><strong>Địa điểm:</strong> @Model.Location</p>
+            <p class="card-text"><strong>Ngày đăng:</strong> @Model.CreatedDate.ToString("dd/MM/yyyy")</p>
+            <p class="card-text"><strong>Mô tả:</strong> @Model.Description</p>
+            <div class="mt-4">
+                <a asp-action="Index" asp-controller="JobSeeker" class="btn btn-secondary">Quay lại</a>
+                <a asp-action="Apply" asp-controller="JobSeeker" asp-route-id="@Model.Id" class="btn btn-primary">Ứng tuyển</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+﻿@model IEnumerable<JobSearchWebsite.Models.UserProfile>
+@{
+    ViewData["Title"] = "Tìm kiếm ứng viên";
+}
+
+<h2>Tìm kiếm ứng viên</h2>
+
+<form asp-action="SearchCandidates" method="get" class="form-inline mb-3">
+    <input type="text" name="keyword" class="form-control mr-2" placeholder="Nhập kỹ năng, địa điểm..." value="@Context.Request.Query["keyword"]" />
+    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+</form>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-warning">Không tìm thấy ứng viên nào phù hợp.</div>
+}
+else
+{
+    <div class="row">
+        @foreach (var profile in Model)
+        {
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">@profile.FullName</h5>
+                        <p class="card-text"><strong>Kỹ năng:</strong> @profile.Skills</p>
+                        <p class="card-text"><strong>Kinh nghiệm:</strong> @profile.Experience</p>
+                        <p class="card-text"><strong>Học vấn:</strong> @profile.Education</p>
+                        <p class="card-text"><strong>Địa chỉ:</strong> @profile.Address</p>
+                        @if (!string.IsNullOrEmpty(profile.CVUrl))
+                        {
+                            <a href="@profile.CVUrl" target="_blank" class="btn btn-outline-secondary btn-sm">Xem CV</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

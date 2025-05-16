@@ -1,0 +1,27 @@
+﻿@model IEnumerable<JobSearchWebsite.Models.ResumeTemplate>
+@{
+    ViewData["Title"] = "Danh sách CV mẫu";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Danh sách CV mẫu</h2>
+    <div class="row g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 col-sm-6">
+                <div class="card h-100 shadow-lg border-0">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Title</h5>
+                        <p class="card-text text-muted">Loại file: @(item.FileType ?? "N/A")</p>
+                        <p class="card-text text-muted">Ngày tạo: @item.CreatedDate.ToString("dd/MM/yyyy")</p>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary btn-sm">Xem chi tiết</a>
+                        @if (!string.IsNullOrEmpty(item.FilePath))
+                        {
+                            <a asp-action="Download" asp-route-id="@item.Id" class="btn btn-success btn-sm mt-2">Tải xuống</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

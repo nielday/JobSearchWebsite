@@ -1,0 +1,38 @@
+﻿@model JobSearchWebsite.Models.ResumeTemplate
+@{
+    ViewData["Title"] = "Chỉnh sửa CV mẫu";
+}
+
+<div class="container mt-5">
+    <h2>Chỉnh sửa CV mẫu</h2>
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Id" />
+        <div class="form-group mb-3">
+            <label asp-for="Title" class="control-label"></label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="form-group mb-3">
+            <label asp-for="Content" class="control-label"></label>
+            <textarea asp-for="Content" class="form-control" rows="10"></textarea>
+            <span asp-validation-for="Content" class="text-danger"></span>
+        </div>
+        <div class="form-group mb-3">
+            <label for="file" class="control-label">Tải lên file mới (PDF, DOCX, ...)</label>
+            <input type="file" name="file" class="form-control" />
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Lưu</button>
+            <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.ckeditor.com/4.25.1-lts/standard/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace('Content');
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,110 @@
+﻿@model JobSearchWebsite.Models.JobApplication
+
+@{
+    ViewData["Title"] = "Chi tiết đơn ứng tuyển";
+}
+
+<div class="container mt-5">
+    <h2 class="text-primary fw-bold mb-4"><i class="bi bi-archive me-2"></i>Chi tiết đơn ứng tuyển</h2>
+
+    <!-- Thông báo -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Chi tiết đơn ứng tuyển -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">@Model.Job.Title</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Ứng viên:</strong> @Model.User.UserName (@Model.User.Email)</p>
+                    <p><strong>Ngày nộp:</strong> @Model.AppliedDate.ToString("dd/MM/yyyy HH:mm")</p>
+                    <p>
+                        <strong>Trạng thái:</strong>
+                        <span class="badge bg-@((Model.Status == "Approved") ? "success" : (Model.Status == "Pending") ? "warning" : "danger")">
+                            @(Model.Status == "Pending" ? "Chờ xử lý" : Model.Status == "Viewed" ? "Đã xem" : Model.Status == "Approved" ? "Được duyệt" : "Bị từ chối")
+                        </span>
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Công việc:</strong> @Model.Job.Title</p>
+                    <p><strong>Công ty:</strong> @Model.Job.Company</p>
+                    <p><strong>Địa điểm:</strong> @Model.Job.Location</p>
+                </div>
+            </div>
+            <hr />
+            <p><strong>Thư ứng tuyển:</strong></p>
+            <p class="text-muted">@(string.IsNullOrEmpty(Model.CoverLetter) ? "Không có thư ứng tuyển." : Model.CoverLetter)</p>
+            @if (!string.IsNullOrEmpty(Model.CVUrl))
+            {
+                <p><strong>CV:</strong> <a href="@Model.CVUrl" target="_blank" class="btn btn-sm btn-info"><i class="bi bi-download me-1"></i>Tải xuống CV</a></p>
+            }
+            else
+            {
+                <p><strong>CV:</strong> <span class="text-muted">Không có CV.</span></p>
+            }
+
+            <!-- Form cập nhật trạng thái -->
+            <form asp-action="UpdateApplicationStatus" asp-controller="Employer" method="post" class="mt-4">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <div class="row align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Cập nhật trạng thái:</label>
+                        <select name="status" class="form-select">
+                            <option value="Pending" selected="@(Model.Status == "Pending")">Chờ xử lý</option>
+                            <option value="Viewed" selected="@(Model.Status == "Viewed")">Đã xem</option>
+                            <option value="Approved" selected="@(Model.Status == "Approved")">Được duyệt</option>
+                            <option value="Rejected" selected="@(Model.Status == "Rejected")">Bị từ chối</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-save me-1"></i>Cập nhật</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Nút quay lại -->
+    <div class="mt-4">
+        <a asp-action="Dashboard" asp-controller="Employer" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i>Quay lại bảng điều khiển
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <style>
+        .card-header {
+            border-radius: 8px 8px 0 0;
+        }
+
+        .form-select {
+            border-radius: 5px;
+        }
+
+            .form-select:focus {
+                box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+                border-color: #007bff;
+            }
+
+        .badge {
+            font-size: 0.9rem;
+            padding: 5px 10px;
+        }
+    </style>
+}

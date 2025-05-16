@@ -1,0 +1,253 @@
+﻿/* Sticky navbar với hiệu ứng Gen Z */
+.navbar {
+    background: linear-gradient(90deg, #ff00cc, #00ffcc) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(8px);
+    transition: all 0.4s ease;
+    border-bottom: 2px solid #ff00cc;
+}
+
+.navbar-brand {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff !important;
+    display: flex;
+    align-items: center;
+    transition: all 0.4s ease;
+}
+
+    .navbar-brand img {
+        height: 60px;
+        margin-right: 15px;
+        border-radius: 15px;
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+        object-fit: contain;
+    }
+
+    .navbar-brand:hover img {
+        transform: scale(1.2) rotate(5deg);
+    }
+
+.nav-link, .dropdown-toggle {
+    color: #fff !important;
+    font-weight: 600;
+    padding: 12px 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.4s ease;
+}
+
+    .nav-link:hover, .dropdown-toggle:hover {
+        color: #ff00cc !important;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        transform: translateY(-3px) scale(1.1);
+    }
+
+.nav-item i {
+    margin-right: 8px;
+}
+
+.dropdown-menu {
+    background: linear-gradient(135deg, #1a0033, #2a0044);
+    border: 1px solid #ff00cc;
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    z-index: 1050;
+    margin-top: 10px;
+    animation: slideDown 0.3s ease-out;
+    min-width: 180px;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dropdown-menu .nav-link {
+    color: #00ffcc;
+    padding: 0.3rem 0.8rem;
+    transition: all 0.4s ease;
+    font-size: 0.85rem;
+}
+
+    .dropdown-menu .nav-link i {
+        font-size: 0.85rem;
+        margin-right: 0.3rem;
+    }
+
+    .dropdown-menu .nav-link:hover {
+        background-color: #ff00cc;
+        color: #fff;
+        transform: translateX(10px) scale(1.05);
+    }
+
+/* Badge thông báo */
+.notification-badge {
+    background-color: #ff007a;
+    color: #fff;
+    border-radius: 50%;
+    padding: 3px 8px;
+    font-size: 0.7rem;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    transition: all 0.4s ease;
+}
+
+    .notification-badge:hover {
+        transform: scale(1.3) rotate(10deg);
+        box-shadow: 0 0 15px #ff007a;
+    }
+
+/* Container chính với phong cách Gen Z */
+.main-container {
+    background: linear-gradient(135deg, #1a0033, #2a0044);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    padding: 40px;
+    margin-top: 350px;
+    margin-bottom: 50px;
+    transition: all 0.5s ease;
+    border: 2px solid #ff00cc;
+    color: #fff;
+}
+
+    .main-container:hover {
+        transform: translateY(-10px) rotateY(5deg);
+        box-shadow: 0 15px 50px rgba(255, 0, 204, 0.7);
+    }
+
+/* Footer cải tiến */
+.footer {
+    background: linear-gradient(90deg, #1a0033, #00ffcc);
+    color: #fff;
+    padding: 50px 0;
+    margin-top: auto;
+    position: relative;
+    overflow: hidden;
+    border-top: 2px solid #ff00cc;
+}
+
+    .footer::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop') no-repeat center center/cover;
+        opacity: 0.1;
+        z-index: -1;
+        animation: fadeWave 20s infinite ease-in-out;
+    }
+
+@keyframes fadeWave {
+    0% {
+        opacity: 0.1;
+    }
+
+    50% {
+        opacity: 0.2;
+    }
+
+    100% {
+        opacity: 0.1;
+    }
+}
+
+.footer a {
+    color: #ff00cc;
+    text-decoration: none;
+    transition: all 0.4s ease;
+}
+
+    .footer a:hover {
+        color: #00ffcc;
+        text-decoration: underline;
+    }
+
+.footer .social-icons a {
+    font-size: 1.8rem;
+    margin: 0 15px;
+    color: #ff00cc;
+    transition: all 0.4s ease;
+}
+
+    .footer .social-icons a:hover {
+        color: #00ffcc;
+        transform: scale(1.3) rotate(15deg);
+    }
+
+/* Nút quay lại đầu trang */
+.back-to-top {
+    display: none;
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background: linear-gradient(45deg, #ff00cc, #00ffcc);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 1.8rem;
+    cursor: pointer;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    transition: all 0.5s ease;
+    z-index: 1000;
+}
+
+    .back-to-top:hover {
+        background: linear-gradient(45deg, #00ffcc, #ff00cc);
+        transform: scale(1.2) rotate(360deg);
+        box-shadow: 0 10px 30px rgba(255, 0, 204, 0.8);
+    }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    body::before {
+        height: 250px;
+    }
+
+    .main-container {
+        margin-top: 250px;
+        padding: 25px;
+        border-radius: 15px;
+    }
+
+    .navbar-brand {
+        font-size: 1.5rem;
+    }
+
+        .navbar-brand img {
+            height: 45px;
+        }
+
+    .nav-link, .dropdown-toggle {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+
+    .footer {
+        padding: 30px 0;
+    }
+
+    .back-to-top {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+        bottom: 15px;
+        right: 15px;
+    }
+}

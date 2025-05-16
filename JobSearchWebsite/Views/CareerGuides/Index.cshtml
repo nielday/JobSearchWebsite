@@ -1,0 +1,74 @@
+﻿@model IEnumerable<JobSearchWebsite.Models.CareerGuide>
+
+@{
+    ViewData["Title"] = "Cẩm nang việc làm";
+}
+
+<h2>Cẩm nang việc làm</h2>
+
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Đăng cẩm nang mới</a>
+    </p>
+}
+
+@if (Model.Any())
+{
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="career-guide card">
+                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                    {
+                        <img src="@item.ImageUrl" class="card-img-top" alt="@item.Title" style="height: 200px; object-fit: cover;" />
+                    }
+                    else
+                    {
+                        <img src="/images/default-career-guide.jpg" class="card-img-top" alt="Default Image" style="height: 200px; object-fit: cover;" />
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
+                        <p class="card-text">
+                            @if (item.Content.Length > 150)
+                            {
+                                @(item.Content.Substring(0, 150) + "...")
+                            }
+                            else
+                            {
+                                @item.Content
+                            }
+                        </p>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                <i class="bi bi-person"></i> <strong>Tác giả:</strong> @item.Author.UserName <br />
+                                <i class="bi bi-calendar"></i> <strong>Ngày đăng:</strong> @item.CreatedDate.ToString("dd/MM/yyyy")
+                            </small>
+                        </p>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i> Sửa</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i> Xóa</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>Chưa có cẩm nang nào được đăng.</p>
+}
+
+<style>
+    .career-guide {
+        transition: transform 0.2s;
+    }
+
+        .career-guide:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+</style>
