@@ -1,0 +1,21 @@
+{
+    "ConnectionStrings": {
+        "DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;Database=JobSearchDB;Trusted_Connection=True;MultipleActiveResultSets=true"
+    },
+    "Logging": {
+        "LogLevel": {
+            "Default": "Information",
+            "Microsoft.AspNetCore": "Warning"
+        }
+    },
+
+    },
+    "EmailSettings": {
+        "SmtpServer": "smtp.gmail.com",
+        "SmtpPort": 587,
+        "SmtpUsername": "phongvipotaku@gmail.com",
+        "SmtpPassword": "zbxf vawz euuv fudm",
+        "SenderEmail": "phongvipotaku@gmail.com",
+        "SenderName": "tets"
+    }
+}

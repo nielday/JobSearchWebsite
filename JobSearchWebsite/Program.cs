@@ -8,6 +8,7 @@ using JobSearchWebsite.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
+using Microsoft.AspNetCore.DataProtection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,7 @@ builder.Services.AddLogging(logging =>
     logging.AddConsole();
     logging.AddDebug();
     logging.SetMinimumLevel(LogLevel.Debug);
+    logging.AddFilter("Microsoft.AspNetCore.Identity", LogLevel.Information);
 });
 
 builder.Services.AddControllersWithViews();
@@ -32,6 +34,18 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders()
     .AddDefaultUI();
+
+// Cấu hình thời hạn token
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+{
+    options.TokenLifespan = TimeSpan.FromDays(3);
+});
+
+// Tạm thời tắt tự động cập nhật SecurityStamp
+builder.Services.Configure<SecurityStampValidatorOptions>(options =>
+{
+    options.ValidationInterval = TimeSpan.Zero;
+});
 
 // Đảm bảo claim NameIdentifier được sử dụng
 builder.Services.Configure<IdentityOptions>(options =>
@@ -50,6 +64,13 @@ builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Emai
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddTransient<IEmailSender, IdentityEmailSender>();
 builder.Services.AddScoped<NotificationService>();
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddDataProtection()
+        .PersistKeysToFileSystem(new DirectoryInfo(@"C:\temp-keys"))
+        .SetApplicationName("JobSearchWebsite");
+}
 
 var app = builder.Build();
 
@@ -139,7 +160,11 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();

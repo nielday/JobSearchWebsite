@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using JobSearchWebsite.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace JobSearchWebsite.Areas.Identity.Pages.Account
 {
@@ -44,13 +45,18 @@ namespace JobSearchWebsite.Areas.Identity.Pages.Account
                     return RedirectToPage("./ForgotPasswordConfirmation");
                 }
 
+                var securityStampBefore = user.SecurityStamp;
+                _logger.LogInformation($"SecurityStamp before token generation for {Input.Email}: {securityStampBefore}");
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                _logger.LogInformation($"SecurityStamp after token generation for {Input.Email}: {user.SecurityStamp}");
+                var encodedToken = HttpUtility.UrlEncode(code); // Mã hóa token
                 var callbackUrl = Url.Page(
                     "/Account/ResetPassword",
                     pageHandler: null,
-                    values: new { area = "Identity", code },
+                    values: new { area = "Identity", code = encodedToken, email = Input.Email },
                     protocol: Request.Scheme);
 
+                _logger.LogInformation($"Sending reset password email to {Input.Email} with callback URL: {callbackUrl}");
                 await _emailSender.SendEmailAsync(
                     Input.Email,
                     "Reset Password",
